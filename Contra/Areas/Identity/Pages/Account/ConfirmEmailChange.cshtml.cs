@@ -57,6 +57,8 @@ namespace Contra.Areas.Identity.Pages.Account
                 return Page();
             }
 
+            user.PastEmails += ", " + email;
+
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Thank you for confirming your email change.";
             return Page();

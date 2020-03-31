@@ -110,6 +110,12 @@ namespace Contra.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostConfirmationAsync(string returnUrl = null)
         {
+            if (!Input.Email.EndsWith("@mvla.net"))
+            {
+                ModelState.AddModelError(string.Empty, "Not a valid MVLA email address!");
+                return Page();
+            }
+
             returnUrl ??= Url.Content("~/");
             // Get the information about the user from the external login provider
             var info = await _signInManager.GetExternalLoginInfoAsync();

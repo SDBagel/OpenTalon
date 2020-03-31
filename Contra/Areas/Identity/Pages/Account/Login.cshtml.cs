@@ -110,7 +110,7 @@ namespace Contra.Areas.Identity.Pages.Account
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, "Invalid login attempt. Is your email confirmed?");
                     return Page();
                 }
             }

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Contra.Data;
 using System;
+using Pomelo.EntityFrameworkCore.MySql;
 
 namespace Contra 
 {
@@ -24,6 +25,7 @@ namespace Contra
                 {
                     var context = services.GetRequiredService<ApplicationDbContext>();
                     context.Database.Migrate();
+                    
                     logger.LogError("Migrated.");
                 }
                 catch (Exception ex)

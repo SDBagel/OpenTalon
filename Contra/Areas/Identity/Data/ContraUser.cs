@@ -8,6 +8,9 @@ namespace Contra.Areas.Identity.Data
     public class ContraUser : IdentityUser
     {
         [PersonalData]
+        public string PastEmails { get; set; }
+
+        [PersonalData]
         public string Name { get; set; }
         [PersonalData]
         public string Bio { get; set; }
