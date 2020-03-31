@@ -130,12 +130,9 @@ namespace Contra.Controllers
                 article.Likes = 0;
 
                 if (User.IsInRole("Staff"))
-                {
-                    article.Approved = ApprovalStatus.Approved;
                     article.IsEditorial = true;
-                }
-                else
-                    article.Approved = ApprovalStatus.Submitted;
+
+                article.Approved = ApprovalStatus.Approved;
 
                 HtmlSanitizer sanitizer = new HtmlSanitizer();
                 article.Content = sanitizer.Sanitize(article.Content);
@@ -206,15 +203,9 @@ namespace Contra.Controllers
                 article.Likes = 0;
 
                 if (User.IsInRole("Staff"))
-                {
-                    article.Approved = ApprovalStatus.Approved;
                     article.IsEditorial = true;
-                }
-                else
-                    article.Approved = ApprovalStatus.Submitted;
 
-                if (article.ArticleType == ArticleType.Blog) 
-                    article.Approved = ApprovalStatus.Approved;
+                article.Approved = ApprovalStatus.Approved;
 
                 HtmlSanitizer sanitizer = new HtmlSanitizer();
                 article.Content = sanitizer.Sanitize(article.Content);
@@ -277,14 +268,11 @@ namespace Contra.Controllers
                 article.Likes = 0;
 
                 if (User.IsInRole("Staff"))
-                {
-                    article.Approved = ApprovalStatus.Approved;
                     article.IsEditorial = true;
-                }
-                else
-                    article.Approved = ApprovalStatus.Submitted;
 
-                HtmlSanitizer sanitizer = new HtmlSanitizer();
+                article.Approved = ApprovalStatus.Approved;
+
+                    HtmlSanitizer sanitizer = new HtmlSanitizer();
                 article.Content = sanitizer.Sanitize(article.Content);
 
                 article.SummaryLong = Regex.Replace(article.Content, @"<[^>]*>", string.Empty).Trim().Substring(0, 60) + "...";

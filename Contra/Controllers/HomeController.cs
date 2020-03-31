@@ -117,10 +117,7 @@ namespace Contra.Controllers
                 comment.PostId = PostId;
                 comment.Date = DateTime.Now;
                 
-                if (User.IsInRole("Staff"))
-                    comment.Approved = ApprovalStatus.Approved;
-                else
-                    comment.Approved = ApprovalStatus.Submitted;
+                comment.Approved = ApprovalStatus.Approved;
 
                 _context.Add(comment);
                 await _context.SaveChangesAsync();
