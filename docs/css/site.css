@@ -7,6 +7,9 @@ html {
 body {
   background-color: #fff;
   margin: 0;
+  min-height: 100vh;
+  padding-bottom: 20rem;
+  position: relative;
 }
 
 .container {
@@ -78,7 +81,7 @@ nav button:hover {
 .block-header {
   background-image: url("../img/contra_back.png");
   background-size: cover;
-  margin-top: 4rem;
+  padding-top: 4rem;
   width: 100%;
   height: 8rem;
   overflow: hidden;
@@ -163,6 +166,10 @@ footer {
   margin-top: 5rem;
   padding: 2rem;
   color: #f4f4f4;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 footer > p {

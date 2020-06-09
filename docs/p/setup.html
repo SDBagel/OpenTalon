@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>Contra Setup</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,400&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="stylesheet" type="text/css" href="../css/site.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <img src="../img/contra_min.png" alt="Logo">
+      <a href="https://github.com/SDBagel/Contra">
+        <button>Repository</button>
+      </a>
+    </nav>
+  </header>
+  <a name="top"></a>
+  <div class="block-header">
+    <h1>Contra Setup</h1>
+  </div>
+  <main class="container">
+    <center>
+      <br>
+      <p><b>Documentation version: <span>v1.0 Full Release</span></b></p>
+      <p><a href="https://sdbagel.github.io/Contra">Back to Home</a></p>
+      <br>
+    </center>
+    <section>
+      <div class="sidebar">
+        <h2>Outline</h2>
+        <p><b><a href="#about">Overview</a></b></p>
+        <p><b><a href="#do">Hosting</a></b></p>
+        <p><a href="#mysql">MySQL</a></p>
+        <p><a href="#nginx">Nginx</a></p>
+        <p><a href="#ssl">SSL</a></p>
+        <p><b><a href="#services">Services</a></b></p>
+        <p><a href="#google">Google</a></p>
+        <p><a href="#sendgrid">Sendgrid</a></p>
+        <p><b><a href="#deployment">Deployment</a></b></p>
+      </div>
+      <div class="docs">
+        <div class="card">
+          <a name="about"></a>
+          <h2>Overview</h2>
+          <p>Contra relies on many external services which can be confusing for someone looking to run their own instance. This guide will briefly go over key areas needed to get a basic setup running and link to useful resources that explain things much better than I do.</p>
+        </div>
+        <div class="card">
+          <a name="do"></a>
+          <h2>Hosting</h2>
+          <p>Contra is hosted on DigitalOcean, although other providers can be used. Since traffic was lightweight, the MySQL database was set up within the same droplet. Nginx was used to route outside traffic into Contra as a reverse-proxy. The rest of this guide assumes you have SSH access to your DO droplet and have Docker installed (DO has a one-click Docker droplet that can be used).</p>
+        </div>
+        <div class="card">
+          <a name="mysql"></a>
+          <h2>MySQL</h2>
+          <p><b>Resources: <a href="https://dev.mysql.com/doc/mysql-installation-excerpt/8.0/en/docker-mysql-getting-started.html">MySQL Docker Installation</a>, <a href="https://support.infrasightlabs.com/article/host-is-not-allowed-to-connect-to-this-mysql-server/">Allowing User to Connect to DB</a>, <a href="https://github.com/PomeloFoundation/Pomelo.EntityFrameworkCore.MySql#scaffolding--reverse-engineering">Pomelo MySQL Migrations</a></b></p>
+          <p>MySQL is most easily configured as a docker container, simply pulling the <span>mysql/mysql-server</span> image and running it. Compared to MSSQL, this is able to be run on the lower end hardware like the cheapest DO droplet at 1GB of RAM. Running this container exposes the MySQL instance on default port 3306.</p>
+          <br>
+          <p>From here, the database needs to have the latest migrations applied. I used Oracle MySQL Workbench 8.0 CE to gain access to the database using the droplet's IP and database password which should be generated on run, then applied migrations generated. See resources on how to get the migration script needed.</p>
+          <br>
+          <p>Lastly, you can now obtain the connection string. It should look like <span>"Server=yourip; Port=3306; Database=yourdbname; User ID=yourid; Password=yourpswd;"</span>. Hang on to this as it will be used in the <a href="#Deployment">configuration file in the last step.</a></p>
+        </div>
+        <div class="card">
+          <a name="nginx"></a>
+          <h2>Nginx</h2>
+          <p><b>Resources: <a href="https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-18-04#prerequisites">DO - Installing Nginx</a>, <a href="https://www.digitalocean.com/community/tutorials/how-to-deploy-an-asp-net-core-application-with-mysql-server-using-nginx-on-ubuntu-18-04#step-4-%E2%80%94-configuring-the-web-server">DO - Configuring Nginx</a></b></p>
+          <p>Nginx is set up according to the resources above but instead of linking to an html file or directory, it is set up as a reverse-proxy pointing to an arbitrary port like 5000. The two guides above from DigitalOcean cover how to do this.</p>
+        </div>
+        <div class="card">
+          <a name="ssl"></a>
+          <h2>SSL</h2>
+          <p><b>Resources: <a href="https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-18-04">DO - Secure Nginx with LetsEncrypt</a></b></p>
+          <p>LetsEncrypt is a free SSL cert generator that was used for Contra. DO conveniently has an article with Nginx and this worked perfectly.</p>
+        </div>
+        <div class="card">
+          <a name="services"></a>
+          <h2>Services</h2>
+          <p>Contra relies on a number of external services for various features, including Twilio Sendgrid for email authentication and Google for OAuth. These are easy to configure as it just requires plugging in API credentials to a config file.</p>
+        </div>
+        <div class="card">
+          <a name="google"></a>
+          <h2>Google OAuth</h2>
+          <p><b>Resources: <a href="https://console.developers.google.com/apis/credentials">Google Developer Console</a></b></p>
+          <p>To get Google OAuth working, an application must be created on the Google Developer Console. It should be of type Web Application. Set the callback url to https://yourdomain.tld/signin-google. Get the client ID and secret. Save these as they'll be used in the final configuration file later in this guide.</p>
+        </div>
+        <div class="card">
+          <a name="sendgrid"></a>
+          <h2>Twilio Sendgrid</h2>
+          <p><b>Resources: <a href="https://sendgrid.com/">Twilio Sendgrid</a></b></p>
+          <p>To get email services working, a Twilio Sendgrid account is required. You can try their services for free or get an upgraded plan through Microsoft Azure or GitHub education. Like with the Google credentials, you'll need the Sendgrid User and API key which can be obtained from the dashboard. Save these as they'll get put in the final configuration file below.</p>
+        </div>
+        <div class="card">
+          <a name="deployment"></a>
+          <h2>Deployment</h2>
+          <p>Now that you have the credentials and infrastructure set up, you can plug them in and compile a docker image to use.</p>
+          <br>
+          <p>In the Contra repository, find the appsettings.json file. In that directory, create a new appsettings.production.json file with the following lines:</p>
+          <br>
+          <p>{
+            "GoogleId": "",
+            "GoogleSecret": "",
+            "ConnectionStrings": {
+              "DefaultConnection": ""
+            },
+            "SendGridUser": "",
+            "SendGridKey": ""
+          }</p>
+          <br>
+          <p>Replace the relevant empty strings with your credentials.</p>
+          <br>
+          <p>Then, you can open Visual Studio or your preferred IDE with container tools to publish a built container to a registry. In your DigitalOcean droplet, you can run <span>docker pull yourImageName</span> and run it with <span>docker run --rm -p 5000:80 -d yourImageName</span>. Replace the <span>5000</span> with whatever port you configured in the Nginx step of this guide.</p>          
+        </div>
+      </div>
+    </section>
+    <br>
+  </main>
+  <footer>
+    <section>
+      <div>
+        <h3>More Stuff</h3>
+        <p><a href="https://sdproductions.github.io/p/about">About Us</a></p>
+        <p><a href="https://sdproductions.github.io/p/about#privacy">Privacy</a></p>
+        <p><a href="https://sdproductions.github.io/p/about#terms">Terms of Use</a></p>
+      </div>
+      <hr>
+      <div>
+        <h3>Contact</h3>
+        <p><a href="mailto:sdbagel@gmail.com">Email</a></p>
+        <p><a href="https://github.com/SDBagel">GitHub</a></p>
+        <p><a href="https://sdbagel.github.io">SDBagel</a></p>
+      </div>
+    </section>
+    <br>
+    <p>Documentation provided by SDProductions & SDBagel.</p>
+    <p>&#9400; SDProductions 2020</p>
+  </footer>
+</body>
+</html>
